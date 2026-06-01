@@ -1,1 +1,482 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LB Futebol News</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --verde: #ff6b00;
+      --verde-escuro: #cc5500;
+      --preto: #0a0a0a;
+      --cinza: #1a1a1a;
+      --cinza-claro: #2a2a2a;
+      --texto: #e8e8e8;
+      --texto-muted: #888;
+    }
 
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--preto);
+      color: var(--texto);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    header {
+      border-bottom: 1px solid var(--cinza-claro);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      position: sticky;
+      top: 0;
+      background: var(--preto);
+      z-index: 10;
+    }
+
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 2px;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-ball {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--verde);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-ball svg { width: 16px; height: 16px; fill: white; }
+
+    .update-badge {
+      font-size: 12px;
+      color: var(--texto-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--verde);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* HERO */
+    .hero {
+      padding: 3rem 2rem 1.5rem;
+      border-bottom: 1px solid var(--cinza-claro);
+      position: relative;
+      overflow: hidden;
+      min-height: 200px;
+    }
+
+    .hero-field {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.18;
+    }
+
+    .hero-content { position: relative; z-index: 1; }
+
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(48px, 8vw, 96px);
+      line-height: 0.95;
+      letter-spacing: 2px;
+      color: white;
+    }
+
+    .hero h1 span { color: var(--verde); }
+
+    .hero-sub {
+      margin-top: 1rem;
+      font-size: 14px;
+      color: var(--texto-muted);
+    }
+
+    /* FILTROS */
+    .filters {
+      padding: 1rem 2rem;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid var(--cinza-claro);
+    }
+
+    .filter-btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      padding: 6px 16px;
+      border-radius: 20px;
+      border: 1px solid var(--cinza-claro);
+      background: transparent;
+      color: var(--texto-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-btn:hover { border-color: var(--verde); color: var(--verde); }
+    .filter-btn.active { background: var(--verde); border-color: var(--verde); color: black; font-weight: 500; }
+
+    /* GRID */
+    .container { padding: 1.5rem 2rem 3rem; }
+
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1px;
+      background: var(--cinza-claro);
+      border: 1px solid var(--cinza-claro);
+    }
+
+    .news-card {
+      background: var(--preto);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: background 0.2s;
+      cursor: pointer;
+    }
+
+    .news-card:hover { background: var(--cinza); }
+
+    .card-tag {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--verde);
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 1.45;
+      color: white;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--texto-muted);
+      line-height: 1.6;
+      flex: 1;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 10px;
+      border-top: 1px solid var(--cinza-claro);
+      font-size: 12px;
+      color: var(--texto-muted);
+    }
+
+    .card-footer a {
+      color: var(--verde);
+      text-decoration: none;
+      font-size: 12px;
+    }
+
+    .card-footer a:hover { text-decoration: underline; }
+
+    /* DESTAQUE */
+    .news-card.destaque {
+      grid-column: span 2;
+      background: var(--cinza);
+    }
+
+    .news-card.destaque .card-title { font-size: 20px; }
+
+    /* LOADING */
+    .loading {
+      grid-column: 1 / -1;
+      padding: 4rem;
+      text-align: center;
+      color: var(--texto-muted);
+    }
+
+    .spinner {
+      width: 32px; height: 32px;
+      border: 2px solid var(--cinza-claro);
+      border-top-color: var(--verde);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-msg {
+      grid-column: 1 / -1;
+      padding: 3rem;
+      text-align: center;
+      color: var(--texto-muted);
+    }
+
+    .error-msg strong { display: block; color: white; margin-bottom: 0.5rem; }
+
+    /* CONFIG PANEL */
+    .config-bar {
+      background: var(--cinza);
+      border: 1px solid var(--cinza-claro);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .config-bar label { font-size: 13px; color: var(--texto-muted); }
+
+    .config-bar input {
+      flex: 1;
+      min-width: 200px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      padding: 8px 12px;
+      background: var(--preto);
+      border: 1px solid var(--cinza-claro);
+      border-radius: 6px;
+      color: white;
+    }
+
+    .config-bar input:focus { outline: none; border-color: var(--verde); }
+
+    .config-bar button {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      padding: 8px 18px;
+      background: var(--verde);
+      color: black;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .config-bar button:hover { background: var(--verde-escuro); }
+
+    .api-hint {
+      font-size: 12px;
+      color: var(--texto-muted);
+      margin-bottom: 1rem;
+    }
+
+    .api-hint a { color: var(--verde); }
+
+    footer {
+      border-top: 1px solid var(--cinza-claro);
+      padding: 1.5rem 2rem;
+      text-align: center;
+      font-size: 12px;
+      color: var(--texto-muted);
+    }
+
+    @media (max-width: 600px) {
+      header { padding: 0 1rem; }
+      .hero { padding: 2rem 1rem 1rem; }
+      .filters { padding: 0.75rem 1rem; }
+      .container { padding: 1rem 1rem 2rem; }
+      .news-card.destaque { grid-column: span 1; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-ball">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm0 2c1.3 0 2.5.3 3.6.8L12 8.5 8.4 4.8A8 8 0 0 1 12 4zm-4.8 1.7L10.5 9 8 13H4.1a8 8 0 0 1 3.1-7.3zM4 12v-.3L4.1 13H4zm.1 1h4L10.5 15 9 19.6A8 8 0 0 1 4.1 13zm5.8 7-.1-.4 1.2-4.1h2l1.2 4.1-.1.4a8 8 0 0 1-4.2 0zm5.1-.4L13.5 15l2.5-2 4 .3A8 8 0 0 1 15 19.6zm4.9-6.6-4-.3-2.5-4.2 3.3-3.5A8 8 0 0 1 19.9 13z" fill="black" opacity=".3"/></svg>
+    </div>
+    LB FUTEBOL NEWS
+  </div>
+  <div class="update-badge">
+    <div class="dot"></div>
+    <span id="last-update">Atualizado hoje</span>
+  </div>
+</header>
+
+<div class="hero">
+  <svg class="hero-field" viewBox="0 0 900 220" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <rect width="900" height="220" fill="#1a6b2a"/>
+    <rect x="0" y="0" width="450" height="220" fill="#1e7a30"/>
+    <rect x="0" y="44" width="900" height="44" fill="#1e7a30"/>
+    <rect x="0" y="132" width="900" height="44" fill="#1e7a30"/>
+    <rect x="20" y="10" width="860" height="200" fill="none" stroke="white" stroke-width="2.5"/>
+    <line x1="450" y1="10" x2="450" y2="210" stroke="white" stroke-width="2.5"/>
+    <circle cx="450" cy="110" r="40" fill="none" stroke="white" stroke-width="2.5"/>
+    <circle cx="450" cy="110" r="3" fill="white"/>
+    <rect x="20" y="60" width="90" height="100" fill="none" stroke="white" stroke-width="2.5"/>
+    <rect x="20" y="80" width="45" height="60" fill="none" stroke="white" stroke-width="2.5"/>
+    <circle cx="65" cy="110" r="18" fill="none" stroke="white" stroke-width="2" stroke-dasharray="4 3"/>
+    <circle cx="75" cy="110" r="2.5" fill="white"/>
+    <rect x="790" y="60" width="90" height="100" fill="none" stroke="white" stroke-width="2.5"/>
+    <rect x="835" y="80" width="45" height="60" fill="none" stroke="white" stroke-width="2.5"/>
+    <circle cx="835" cy="110" r="18" fill="none" stroke="white" stroke-width="2" stroke-dasharray="4 3"/>
+    <circle cx="825" cy="110" r="2.5" fill="white"/>
+    <path d="M20 10 Q20 10 20 10" fill="none" stroke="white" stroke-width="2.5"/>
+    <circle cx="20" cy="10" r="3" fill="white" stroke="none"/>
+    <circle cx="880" cy="10" r="3" fill="white" stroke="none"/>
+    <circle cx="20" cy="210" r="3" fill="white" stroke="none"/>
+    <circle cx="880" cy="210" r="3" fill="white" stroke="none"/>
+  </svg>
+  <div class="hero-content">
+    <h1>AS MELHORES<br>NOTÍCIAS DO <span>FUTEBOL</span></h1>
+    <p class="hero-sub">LB Futebol News &mdash; atualizado automaticamente todo dia</p>
+  </div>
+</div>
+
+<div class="filters">
+  <button class="filter-btn active" onclick="filter(this,'')">Tudo</button>
+  <button class="filter-btn" onclick="filter(this,'brasileirao')">Brasileirão</button>
+  <button class="filter-btn" onclick="filter(this,'champions')">Champions</button>
+  <button class="filter-btn" onclick="filter(this,'selecao')">Seleção</button>
+  <button class="filter-btn" onclick="filter(this,'transferencia')">Transferências</button>
+  <button class="filter-btn" onclick="filter(this,'copa')">Copa do Mundo</button>
+</div>
+
+<div class="container">
+  <div class="config-bar" id="config-bar">
+    <label>Sua chave GNews API:</label>
+    <input type="text" id="api-key-input" placeholder="Cole aqui sua API key gratuita..." />
+    <button onclick="saveKey()">Salvar e carregar</button>
+  </div>
+  <p class="api-hint">
+    Não tem uma chave? Crie grátis em <a href="https://gnews.io" target="_blank">gnews.io</a> — plano free dá 100 chamadas/dia.
+  </p>
+
+  <div class="news-grid" id="news-grid">
+    <div class="loading">
+      <div class="spinner"></div>
+      Aguardando sua API key...
+    </div>
+  </div>
+</div>
+
+<footer>
+  LB Futebol News &mdash; atualizado automaticamente via GNews API
+</footer>
+
+<script>
+const CATEGORIAS = {
+  '': 'Geral',
+  'brasileirao': 'Brasileirão',
+  'champions': 'Champions',
+  'selecao': 'Seleção',
+  'transferencia': 'Transferência',
+  'copa': 'Copa do Mundo'
+};
+
+const QUERIES = {
+  '': 'principais noticias futebol hoje 2026',
+  'brasileirao': 'Brasileirão 2026 noticias hoje',
+  'champions': 'Champions League 2026 noticias hoje',
+  'selecao': 'Seleção Brasileira futebol 2026 noticias',
+  'transferencia': 'transferencias futebol 2026 noticias',
+  'copa': 'Copa do Mundo 2026 noticias'
+};
+
+let currentFilter = '';
+
+function filter(btn, cat) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentFilter = cat;
+  loadNews();
+}
+
+async function loadNews() {
+  const grid = document.getElementById('news-grid');
+  const query = QUERIES[currentFilter];
+  const cat = CATEGORIAS[currentFilter] || 'Futebol';
+
+  grid.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando notícias de ' + cat + '...</div>';
+
+  const prompt = `Você é um jornalista esportivo. Busque as notícias MAIS RECENTES e REAIS sobre: "${query}".
+Retorne APENAS JSON válido, sem markdown, sem explicação. Formato exato:
+{"noticias":[{"titulo":"...","resumo":"...","fonte":"ge.globo.com ou espn.com.br ou lance.com.br","url":"https://...","tempo":"há X horas"}]}
+Retorne exatamente 9 notícias reais e recentes de 2025/2026. Resumos com 2 frases. SOMENTE o JSON.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 2000,
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await res.json();
+    const text = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
+    const clean = text.replace(/```json|```/g, '').trim();
+
+    let parsed;
+    try { parsed = JSON.parse(clean); }
+    catch(e) {
+      const match = clean.match(/\{[\s\S]*\}/);
+      if (match) parsed = JSON.parse(match[0]);
+      else throw new Error('Formato inválido');
+    }
+
+    const noticias = parsed.noticias || [];
+    if (!noticias.length) throw new Error('Sem notícias');
+
+    grid.innerHTML = '';
+    noticias.forEach((n, i) => {
+      const card = document.createElement('div');
+      card.className = 'news-card' + (i === 0 ? ' destaque' : '');
+      card.innerHTML = `
+        <div class="card-tag">${cat}</div>
+        <div class="card-title">${n.titulo || ''}</div>
+        <div class="card-desc">${n.resumo || ''}</div>
+        <div class="card-footer">
+          <span>${n.fonte || ''} &middot; ${n.tempo || 'recente'}</span>
+          ${n.url ? `<a href="${n.url}" target="_blank">Ler &rarr;</a>` : ''}
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+
+    const now = new Date();
+    document.getElementById('last-update').textContent =
+      'Atualizado ' + now.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+
+  } catch(e) {
+    grid.innerHTML = `<div class="error-msg"><strong>Erro ao carregar notícias.</strong> Tente novamente. (${e.message})</div>`;
+  }
+}
+
+window.addEventListener('DOMContentLoaded', loadNews);
+</script>
+</body>
+</html>
