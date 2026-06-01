@@ -1,1 +1,28 @@
+name: Atualizar Notícias Diárias
 
+on:
+  schedule:
+    - cron: '0 9 * * *'   # todo dia às 06:00 horário de Brasília (09:00 UTC)
+  workflow_dispatch:        # permite rodar manualmente também
+
+jobs:
+  atualizar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Buscar notícias do dia
+        run: |
+          python3 fetch_news.py
+        env:
+          GNEWS_API_KEY: ${{ secrets.GNEWS_API_KEY }}
+
+      - name: Publicar atualização
+        run: |
+          git config user.name "Futebol Bot"
+          git config user.email "bot@futebolagora.com"
+          git add noticias.json
+          git diff --staged --quiet || git commit -m "Notícias atualizadas - $(date '+%d/%m/%Y %H:%M')"
+          git push
