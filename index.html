@@ -436,11 +436,7 @@ async function loadNews() {
   const grid = document.getElementById('news-grid');
   grid.innerHTML = '<div class="loading"><div class="spinner"></div>Buscando notícias...</div>';
 
-  const query = QUERIES[currentFilter];
-  const url = `https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&lang=pt&country=br&max=9&token=${apiKey}`;
-
-  try {
-    const res = await fetch(url);
+ const res = await fetch('./noticias.json');
     if (!res.ok) throw new Error('API error ' + res.status);
     const data = await res.json();
     const articles = data.articles || [];
